@@ -4,14 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OOMI - اطلب الآن</title>
-    <base href="/oomi-app/" /> 
     
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
+    <base href="/oomi-app/" /> 
+
+    <link rel="stylesheet" href="./lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/app.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="OOMI.Client.styles.css" rel="stylesheet" />
+    <link href="./OOMI.Client.styles.css" rel="stylesheet" />
 </head>
+
 <body>
     <div id="app">
         <div class="text-center mt-5">
@@ -20,20 +22,26 @@
         </div>
     </div>
 
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <div id="blazor-error-ui">
+        حدث خطأ غير متوقع في نظام أوومي.
+        <a href="." class="reload">تحديث الصفحة</a>
+        <span class="dismiss">🗙</span>
+    </div>
+
+    <script src="./_framework/blazor.webassembly.js" autostart="false"></script>
     <script>
-      window.onload = function() {
-        if (window.Blazor) {
-          Blazor.start({
-            loadBootResource: function (type, name, defaultUri, integrity) {
-              // تعطيل فحص البصمة الرقمية لضمان التشغيل
-              return defaultUri;
+        window.onload = function() {
+            if (window.Blazor) {
+                Blazor.start({
+                    loadBootResource: function (type, name, defaultUri, integrity) {
+                        // تعطيل فحص Integrity لضمان تخطي مشاكل Netlify/GitHub السابقة
+                        return defaultUri;
+                    }
+                });
+            } else {
+                console.error("OOMI Log: Blazor not found. Check if _framework exists.");
             }
-          });
-        } else {
-          console.error("OOMI Log: Blazor not found. Check _framework folder.");
-        }
-      };
+        };
     </script>
 </body>
 </html>
