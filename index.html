@@ -11,27 +11,22 @@
 </head>
 <body>
     <div id="app">
-        <div style="text-align:center; margin-top: 100px;">
+        <div style="text-align:center; margin-top: 100px; font-family: sans-serif;">
             <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <h4 style="color: #28a745; margin-top: 20px;">أبو قصي.. جاري تشغيل المتجر</h4>
+            <h4 style="color: #28a745; margin-top: 20px;">OOMI... جاري تشغيل المتجر</h4>
         </div>
     </div>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
-    <script src="app-bin/blazor.webassembly.zxhwjtv6sc.js" autostart="false"></script>
+    <script src="app-bin/blazor.webassembly.js" autostart="false"></script>
     
     <script>
-        // ننتظر حتى يتم تحميل الملف بالاسم الجديد
-        if (window.Blazor || document.querySelector('script[src*="blazor.webassembly"]')) {
-            Blazor.start({
-                loadBootResource: function (type, name, defaultUri, integrity) {
-                    // توجيه كافة الملفات لمجلد app-bin لضمان استمرار التشغيل
-                    return `app-bin/${name}?v=${new Date().getTime()}`;
-                }
-            });
-        } else {
-            console.error("أبو قصي، المتصفح لسه مش شايف الملف حتى بالاسم الجديد!");
-        }
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                // توجيه كل طلبات النظام إلى المجلد الجديد النظيف
+                return `app-bin/${name}?v=${new Date().getTime()}`;
+            }
+        });
     </script>
 </body>
 </html>
