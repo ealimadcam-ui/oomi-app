@@ -10,9 +10,9 @@
 </head>
 <body>
     <div id="app">
-        <div style="text-align:center; margin-top: 100px; font-family: sans-serif;">
+        <div style="text-align:center; margin-top: 100px;">
             <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <h4 style="color: #28a745; margin-top: 20px;">أبو قصي.. جاري التشغيل النهائي للنظام</h4>
+            <h4 style="color: #28a745; margin-top: 20px;">أبو قصي.. جاري التوجيه الإجباري للنظام</h4>
         </div>
     </div>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
@@ -20,20 +20,21 @@
     <script src="app-bin/blazor.webassembly.zxhwjtv6sc.js" autostart="false"></script>
     
     <script>
+        // تعريف الأسماء المشفرة التي وجدتها أنت في GitHub
+        const dotnetJs = 'dotnet.8pd5pdjayx.js';
+        const dotnetNative = 'dotnet.native.mx9wzm9o5h.js';
+        const dotnetRuntime = 'dotnet.runtime.2zl32tp6ah.js';
+
         if (window.Blazor) {
             Blazor.start({
                 loadBootResource: function (type, name, defaultUri, integrity) {
-                    // خريطة الربط (Mapping) بالأسماء المشفرة الموجودة عندك
-                    const resources = {
-                        'dotnet.js': 'dotnet.8pd5pdjayx.js',
-                        'dotnet.native.js': 'dotnet.native.mx9wzm9o5h.js',
-                        'dotnet.runtime.js': 'dotnet.runtime.2zl32tp6ah.js'
-                    };
-
-                    // إذا كان الملف المطلوب في الخريطة، أعطه الاسم المشفر
-                    const fileName = resources[name] || name;
+                    // توجيه إجباري وحرفي لكل ملف مشفر
+                    if (name === 'dotnet.js') return `app-bin/${dotnetJs}?v=${new Date().getTime()}`;
+                    if (name === 'dotnet.native.js') return `app-bin/${dotnetNative}?v=${new Date().getTime()}`;
+                    if (name === 'dotnet.runtime.js') return `app-bin/${dotnetRuntime}?v=${new Date().getTime()}`;
                     
-                    return `app-bin/${fileName}?v=${new Date().getTime()}`;
+                    // بقية الملفات (الـ 51 ملف)
+                    return `app-bin/${name}?v=${new Date().getTime()}`;
                 }
             });
         }
