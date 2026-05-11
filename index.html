@@ -8,13 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="OOMI.Client.styles.css" rel="stylesheet" />
 </head>
 <body>
     <div id="app">
         <div style="text-align:center; margin-top: 100px; font-family: sans-serif;">
             <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <h4 style="color: #28a745; margin-top: 20px;">OOMI... جاري فتح المتجر</h4>
+            <h4 style="color: #28a745; margin-top: 20px;">OOMI... جاري تشغيل المتجر</h4>
         </div>
     </div>
 
@@ -25,7 +24,15 @@
     <script>
         Blazor.start({
             loadBootResource: function (type, name, defaultUri, integrity) {
-                // تجاوز فحص Integrity للسماح للملفات المعدلة بالعمل
+                // حل مشكلة الـ 404 لملفات الـ JS التي يبحث عنها النظام بأسماء قديمة
+                if (name === 'dotnet.runtime.js') return '_framework/dotnet.runtime.js';
+                if (name === 'dotnet.native.js') return '_framework/dotnet.native.js';
+                if (name === 'dotnet.js') return '_framework/dotnet.js';
+
+                // حل مشكلة ملف الـ WASM الرئيسي الذي يظهر في أخطائك
+                if (name === 'dotnet.native.wasm') return '_framework/dotnet.native.wasm';
+
+                // بالنسبة لبقية ملفات الـ System...wasm، نتركها تبحث في مجلد _framework
                 return `_framework/${name}`;
             }
         });
