@@ -5,29 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OOMI - اطلب الآن</title>
     <base href="/oomi-app/" /> 
-    <link rel="stylesheet" href="./lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./css/app.css" />
+    
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="./OOMI.Client.styles.css" rel="stylesheet" />
+    <link href="OOMI.Client.styles.css" rel="stylesheet" />
 </head>
 <body>
     <div id="app">
-        <div style="text-align:center; margin-top: 50px;">جاري تحميل متجر أوومي...</div>
+        <div style="text-align:center; margin-top: 100px; font-family: sans-serif;">
+            <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <h4 style="color: #2c3e50; margin-top: 20px;">OOMI... جاري تحميل المتجر</h4>
+        </div>
     </div>
 
-    <script src="./_framework/blazor.webassembly.zxhwjtv6sc.js" autostart="false"></script>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <script src="_framework/blazor.webassembly.zxhwjtv6sc.js" autostart="false"></script>
+    
     <script>
-        // هذا الجزء يحل مشكلة الـ 404 لملفات dotnet.js
-        navigator.serviceWorker.register('service-worker.js');
-        var path = window.location.pathname.split('/');
-        var base = path.slice(0, path.length - 1).join('/') + '/';
-        
+        // تشغيل البلازور مع معالجة المسارات المشفرة
         Blazor.start({
             loadBootResource: function (type, name, defaultUri, integrity) {
-                // إجبار النظام على البحث عن الملفات في مجلد _framework الصحيح
-                return `_framework/${name}`;
+                // هذا الجزء يخبر المتصفح أن يبحث دائماً داخل مجلد _framework
+                // وبما أننا وضعنا blazor.boot.json اليدوي، سيعرف النظام كيف يربط الأسماء
+                return defaultUri; 
             }
         });
+
+        // تسجيل الـ Service Worker إذا كان موجوداً
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
     </script>
 </body>
 </html>
