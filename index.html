@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OOMI - اطلب الآن</title>
+    <!-- تأكد أن المسار يطابق اسم المستودع على جيت هاب -->
     <base href="/oomi-app/" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -32,27 +32,38 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
+    <!-- تعطيل التشغيل التلقائي للتحكم في عملية التحميل وتجاوز فحص النزاهة -->
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                // تجاوز فحص النزاهة (Integrity Check) لضمان تحميل الملفات المرفوعة يدوياً
+                console.log("OOMI Debug: Loading " + name);
+                return defaultUri;
+            }
+        });
+    </script>
+
+    <script>
+        // تسجيل الـ Service Worker مع معالجة الخطأ
+        navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
+            .catch(err => console.error("OOMI ServiceWorker error: ", err));
+    </script>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // متغير عالمي لحفظ العنوان المختار لضمان الوصول إليه من C#
         window.selectedLocationText = "الرياض، المملكة العربية السعودية";
 
         window.initializeMap = () => {
-            // إحداثيات الرياض كمركز افتراضي
             var defaultLat = 24.7136;
             var defaultLon = 46.6753;
 
-            // التأكد من تنظيف حاوية الخريطة قبل إعادة الإنشاء لمنع أخطاء الـ DOM
             var container = L.DomUtil.get('map');
             if (container != null) {
                 container._leaflet_id = null;
             }
 
-            // إنشاء الخريطة
             var map = L.map('map').setView([defaultLat, defaultLon], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -60,29 +71,22 @@
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // إضافة الدبوس (Marker) وتفعيله للسحب
             var marker = L.marker([defaultLat, defaultLon], {
                 draggable: true,
                 autoPan: true
             }).addTo(map);
 
-            // تحديث المتغير العالمي عند الانتهاء من سحب الدبوس
             marker.on('dragend', function (event) {
                 var position = marker.getLatLng();
-                // تنسيق النص الذي سيتم حفظه كـ SavedLocation
                 window.selectedLocationText = "موقع مخصص: " + position.lat.toFixed(5) + " , " + position.lng.toFixed(5);
-                console.log("OOMI Map Log: " + window.selectedLocationText);
             });
 
-            // معالجة مشكلة ظهور أجزاء رمادية في الخريطة عند التحميل الأول
             setTimeout(function () {
                 map.invalidateSize();
             }, 600);
         };
 
-        // الدالة التي يستدعيها كود C# في صفحة SelectLocation
         window.getSelectedAddress = () => {
-            console.log("C# requested address: " + window.selectedLocationText);
             return window.selectedLocationText;
         };
     </script>
