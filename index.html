@@ -7,12 +7,19 @@
     <base href="/oomi-app/" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
     <link href="OOMI.Client.styles.css" rel="stylesheet" />
 </head>
 <body>
-    <div id="app">جاري التحميل...</div>
-    <!-- تحميل مباشر بدون فحص نزاهة -->
-    <script src="_framework/blazor.webassembly.js"></script>
+    <div id="app">جاري تحميل الأصناف...</div>
+
+    <!-- تشغيل المحرك بدون فحص النزاهة وبدون Service Worker -->
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                return defaultUri; 
+            }
+        });
+    </script>
 </body>
 </html>
