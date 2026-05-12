@@ -20,20 +20,6 @@
         </div>
     </div>
 
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
-    <script>
-      window.onload = function() {
-        if (window.Blazor) {
-          Blazor.start({
-            loadBootResource: function (type, name, defaultUri, integrity) {
-              // تعطيل فحص البصمة الرقمية لضمان التشغيل
-              return defaultUri;
-            }
-          });
-        } else {
-          console.error("OOMI Log: Blazor not found. Check _framework folder.");
-        }
-      };
-    </script>
+    <script src="_framework/blazor.webassembly.js"></script>
 </body>
 </html>
