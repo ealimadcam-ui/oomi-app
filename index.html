@@ -17,9 +17,23 @@
         <div class="text-center mt-5">
             <div class="spinner-border text-success mb-2" role="status"></div>
             <h4 class="text-success fw-bold">OOMI... جاري تحميل المتجر</h4>
+            <p class="text-muted">أبو قصي.. جاري جلب البيانات من المجلد الجديد</p>
         </div>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    
+    <script>
+        // تشغيل Blazor مع توجيه المسارات إلى app-bin
+        if (window.Blazor) {
+            Blazor.start({
+                loadBootResource: function (type, name, defaultUri, integrity) {
+                    // إجبار النظام على طلب الملفات من مجلد app-bin
+                    // نستخدم Date لمنع المتصفح من تخزين نسخة قديمة (Cache)
+                    return `app-bin/${name}?v=${new Date().getTime()}`;
+                }
+            });
+        }
+    </script>
 </body>
 </html>
