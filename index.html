@@ -31,65 +31,56 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <!-- استدعاء ملف التشغيل الأساسي -->
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <!-- تحميل ملف التشغيل من app-bin مباشرة لتفادي حظر جيت هاب لمجلد _framework -->
+    <script src="app-bin/blazor.webassembly.js" autostart="false"></script>
     
     <script>
-        Blazor.start({
-            loadBootResource: function (type, name, defaultUri, integrity) {
-                // الخدعة الكبرى: تحويل الطلبات من _framework (المحظور) إلى app-bin (المفتوح)
-                // وتجاهل فحص النزاهة لضمان التحميل السريع للملفات المرفوعة يدوياً
-                console.log("OOMI Redirect: Loading " + name + " from app-bin");
-                return defaultUri.replace('_framework', 'app-bin');
+        // التأكد من تحميل المكتبة قبل محاولة تشغيلها
+        window.onload = function() {
+            if (typeof Blazor !== 'undefined') {
+                Blazor.start({
+                    loadBootResource: function (type, name, defaultUri, integrity) {
+                        // توجيه كافة موارد الإقلاع إلى المجلد البديل وتجاهل فحص النزاهة
+                        console.log("OOMI System: Fetching " + name + " from app-bin");
+                        return `app-bin/${name}`;
+                    }
+                });
+            } else {
+                console.error("OOMI Error: Blazor engine failed to load from app-bin.");
             }
-        });
+        };
     </script>
 
     <script>
-        // تسجيل الـ Service Worker
-        navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
-            .catch(err => console.error("OOMI ServiceWorker error: ", err));
+        // تسجيل الـ Service Worker مع تجاهل الأخطاء لضمان استمرارية التطبيق
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
+                .catch(err => console.log("SW Status: Pending update."));
+        }
     </script>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         window.selectedLocationText = "الرياض، المملكة العربية السعودية";
-
         window.initializeMap = () => {
             var defaultLat = 24.7136;
             var defaultLon = 46.6753;
-
             var container = L.DomUtil.get('map');
-            if (container != null) {
-                container._leaflet_id = null;
-            }
-
+            if (container != null) { container._leaflet_id = null; }
             var map = L.map('map').setView([defaultLat, defaultLon], 13);
-
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap'
             }).addTo(map);
-
-            var marker = L.marker([defaultLat, defaultLon], {
-                draggable: true,
-                autoPan: true
-            }).addTo(map);
-
+            var marker = L.marker([defaultLat, defaultLon], { draggable: true, autoPan: true }).addTo(map);
             marker.on('dragend', function (event) {
                 var position = marker.getLatLng();
                 window.selectedLocationText = "موقع مخصص: " + position.lat.toFixed(5) + " , " + position.lng.toFixed(5);
             });
-
-            setTimeout(function () {
-                map.invalidateSize();
-            }, 600);
+            setTimeout(function () { map.invalidateSize(); }, 600);
         };
-
-        window.getSelectedAddress = () => {
-            return window.selectedLocationText;
-        };
+        window.getSelectedAddress = () => { return window.selectedLocationText; };
     </script>
 </body>
 </html>
