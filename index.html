@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OOMI - اطلب الآن</title>
     <base href="/oomi-app/" /> 
-    
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -16,33 +15,27 @@
     <div id="app">
         <div style="text-align:center; margin-top: 100px;">
             <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <h4 style="color: #28a745; margin-top: 20px;">OOMI... جاري الربط النهائي للملفات</h4>
-            <p style="color: #6c757d;">أبو قصي.. يتم الآن جلب البيانات السحابية</p>
+            <h4 style="color: #28a745; margin-top: 20px;">OOMI... جاري تشغيل المحرك الجديد</h4>
+            <p style="color: #6c757d;">أبو قصي.. يتم الآن الربط السحابي بـ .NET 10</p>
         </div>
     </div>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script src="app-bin/blazor.webassembly.zxhwjtv6sc.js" autostart="false"></script>
     
     <script>
+        // الأسماء الجديدة المستخرجة من صورتك (app-bin)
+        const dotnetJs = 'dotnet.27fkkz9ckm.js';
+        const dotnetNative = 'dotnet.native.o027ce4ny1.js';
+        const dotnetRuntime = 'dotnet.runtime.2zl32tp6ah.js';
+
         if (window.Blazor) {
             Blazor.start({
                 loadBootResource: function (type, name, defaultUri, integrity) {
-                    // 1. توجيه ملف التشغيل الأساسي لنسخته المشفرة الأحدث
-                    if (name === 'dotnet.js') {
-                        return `app-bin/dotnet.fzby0dy98k.js?v=${new Date().getTime()}`;
-                    }
-
-                    // 2. توجيه ملفات الـ Runtime والـ Native لأسماءها الطويلة لضمان التوافق
-                    if (name === 'dotnet.runtime.js') {
-                        return `app-bin/dotnet.runtime.2zl32tp6ah.js?v=${new Date().getTime()}`;
-                    }
-                    if (name === 'dotnet.native.js') {
-                        return `app-bin/dotnet.native.mx9wzm9o5h.js?v=${new Date().getTime()}`;
-                    }
-
-                    // 3. أي ملف آخر (WASM, DLL, JSON) يتم سحبه باسمه الأصلي من app-bin
-                    console.log("OOMI System: Loading resource -> " + name);
+                    if (name === 'dotnet.js') return `app-bin/${dotnetJs}?v=${new Date().getTime()}`;
+                    if (name === 'dotnet.native.js') return `app-bin/${dotnetNative}?v=${new Date().getTime()}`;
+                    if (name === 'dotnet.runtime.js') return `app-bin/${dotnetRuntime}?v=${new Date().getTime()}`;
+                    
                     return `app-bin/${name}?v=${new Date().getTime()}`;
                 }
             });
