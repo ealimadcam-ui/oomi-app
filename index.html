@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OOMI - اطلب الآن</title>
-    <!-- تأكد أن المسار يطابق اسم المستودع على جيت هاب -->
     <base href="/oomi-app/" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
@@ -32,20 +31,22 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <!-- تعطيل التشغيل التلقائي للتحكم في عملية التحميل وتجاوز فحص النزاهة -->
+    <!-- استدعاء ملف التشغيل الأساسي -->
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    
     <script>
         Blazor.start({
             loadBootResource: function (type, name, defaultUri, integrity) {
-                // تجاوز فحص النزاهة (Integrity Check) لضمان تحميل الملفات المرفوعة يدوياً
-                console.log("OOMI Debug: Loading " + name);
-                return defaultUri;
+                // الخدعة الكبرى: تحويل الطلبات من _framework (المحظور) إلى app-bin (المفتوح)
+                // وتجاهل فحص النزاهة لضمان التحميل السريع للملفات المرفوعة يدوياً
+                console.log("OOMI Redirect: Loading " + name + " from app-bin");
+                return defaultUri.replace('_framework', 'app-bin');
             }
         });
     </script>
 
     <script>
-        // تسجيل الـ Service Worker مع معالجة الخطأ
+        // تسجيل الـ Service Worker
         navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
             .catch(err => console.error("OOMI ServiceWorker error: ", err));
     </script>
