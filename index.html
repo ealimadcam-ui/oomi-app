@@ -7,22 +7,26 @@
     <base href="/oomi-app/" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <link href="OOMI.Client.styles.css" rel="stylesheet" />
 </head>
 <body>
-    <div id="app">جاري تحميل الأصناف...</div>
+    <div id="app">جاري تحميل المتجر...</div>
 
-    <!-- تشغيل المحرك بدون فحص النزاهة وبدون Service Worker -->
-   <script src="app-bin/blazor.webassembly.js" autostart="false"></script>
-<script>
-    if (typeof Blazor !== 'undefined') {
-        Blazor.start({
-            loadBootResource: function (type, name, defaultUri, integrity) {
-                // إجبار النظام على القراءة من المجلد الجديد
-                return `app-bin/${name}`;
+    <!-- استدعاء المحرك من المجلد الجديد app-bin -->
+    <script src="app-bin/blazor.webassembly.js" autostart="false"></script>
+    
+    <script>
+        window.onload = function() {
+            if (typeof Blazor !== 'undefined') {
+                Blazor.start({
+                    loadBootResource: function (type, name, defaultUri, integrity) {
+                        // إجبار النظام على سحب كافة ملفات الـ DLL من app-bin
+                        return `app-bin/${name}`;
+                    }
+                });
+            } else {
+                console.error("OOMI Error: Blazor engine failed to load from app-bin.");
             }
-        });
-    }
-</script>
+        };
+    </script>
 </body>
 </html>
