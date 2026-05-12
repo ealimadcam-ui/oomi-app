@@ -16,22 +16,27 @@
         <div style="text-align:center; margin-top: 100px;">
             <div style="display: inline-block; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <h4 style="color: #28a745; margin-top: 20px;">OOMI... جاري إطلاق التحديث الجديد</h4>
-            <p style="color: #6c757d;">أبو قصي.. جاري الربط ببيانات السيرفر عبر القناة الجديدة</p>
+            <p style="color: #6c757d;">أبو قصي.. يتم الآن فك تشفير البيانات وتجاوز حماية المتصفح</p>
         </div>
     </div>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
+    <!-- ملف التشغيل الرئيسي لـ Blazor -->
     <script src="app-bin/blazor.webassembly.zxhwjtv6sc.js" autostart="false"></script>
     
     <script>
-        // الأسماء الجديدة المشتقة من مجلد app-bin في صورتك الأخيرة
+        // مسميات ملفات النظام المستخرجة من مجلد app-bin
         const dotnetJs = 'dotnet.27fkkz9ckm.js';
         const dotnetNative = 'dotnet.native.o027ce4ny1.js';
         const dotnetRuntime = 'dotnet.runtime.2zl32tp6ah.js';
 
+        // وسيط (Proxy) مجاني لكسر حماية HTTPS -> HTTP وتجنب ERR_CONNECTION_RESET
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
+
         if (window.Blazor) {
             Blazor.start({
                 loadBootResource: function (type, name, defaultUri, integrity) {
+                    // تحميل ملفات النظام من المجلد الفرعي app-bin مع كسر الكاش
                     if (name === 'dotnet.js') return `app-bin/${dotnetJs}?v=${new Date().getTime()}`;
                     if (name === 'dotnet.native.js') return `app-bin/${dotnetNative}?v=${new Date().getTime()}`;
                     if (name === 'dotnet.runtime.js') return `app-bin/${dotnetRuntime}?v=${new Date().getTime()}`;
@@ -40,6 +45,21 @@
                 }
             });
         }
+
+        /**
+         * 🛠️ الحل الهندسي القاطع:
+         * اعتراض جميع طلبات Fetch داخل التطبيق. إذا كان الطلب موجهاً للسيرفر السحابي، 
+         * يتم تغليفه ببروكيسي AllOrigins لضمان مروره عبر HTTPS بنجاح.
+         **/
+        const originalFetch = window.fetch;
+        window.fetch = async (...args) => {
+            let resource = args[0];
+            if (typeof resource === 'string' && resource.includes('jtempurl.com')) {
+                // دمج الرابط مع البروكسي وتشفيره
+                args[0] = proxyUrl + encodeURIComponent(resource);
+            }
+            return originalFetch(...args);
+        };
     </script>
 </body>
 </html>
