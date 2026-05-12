@@ -3,82 +3,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OOMI - اطلب الآن</title>
-    <!-- المسار الصحيح للمستودع -->
+    <title>OOMI</title>
     <base href="/oomi-app/" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="OOMI.Client.styles.css" rel="stylesheet" />
-    <link href="manifest.webmanifest" rel="manifest" />
 </head>
-
 <body>
-    <div id="app">
-        <div class="text-center mt-5">
-            <div class="spinner-border text-success mb-2" role="status"></div>
-            <h4 class="text-success fw-bold">OOMI... جاري تحميل المتجر</h4>
-        </div>
-    </div>
-
-    <div id="blazor-error-ui">
-        حدث خطأ غير متوقع في نظام أوومي.
-        <a href="." class="reload">تحديث الصفحة</a>
-        <span class="dismiss">🗙</span>
-    </div>
-
-    <!-- محرك Blazor الأساسي -->
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
-    
-    <script>
-        // تشغيل النظام مع تجاوز فحص النزاهة (Integrity) يدوياً
-        if (typeof Blazor !== 'undefined') {
-            Blazor.start({
-                loadBootResource: function (type, name, defaultUri, integrity) {
-                    // إجبار المتصفح على تحميل الملفات مباشرة لكسر حلقة الـ SRI
-                    return defaultUri;
-                }
-            });
-        } else {
-            // محاولة بديلة إذا فشل المسار الأول (التحويل لـ app-bin)
-            let script = document.createElement('script');
-            script.src = "app-bin/blazor.webassembly.js";
-            script.onload = () => {
-                Blazor.start({
-                    loadBootResource: function (type, name, defaultUri, integrity) {
-                        return `app-bin/${name}`;
-                    }
-                });
-            };
-            document.body.appendChild(script);
-        }
-    </script>
-
-    <!-- تضمين الخريطة والوظائف الأخرى -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        window.selectedLocationText = "الرياض، المملكة العربية السعودية";
-        window.initializeMap = () => {
-            var defaultLat = 24.7136;
-            var defaultLon = 46.6753;
-            var container = L.DomUtil.get('map');
-            if (container != null) { container._leaflet_id = null; }
-            var map = L.map('map').setView([defaultLat, defaultLon], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-            var marker = L.marker([defaultLat, defaultLon], { draggable: true, autoPan: true }).addTo(map);
-            marker.on('dragend', function (event) {
-                var position = marker.getLatLng();
-                window.selectedLocationText = "موقع مخصص: " + position.lat.toFixed(5) + " , " + position.lng.toFixed(5);
-            });
-            setTimeout(function () { map.invalidateSize(); }, 600);
-        };
-        window.getSelectedAddress = () => { return window.selectedLocationText; };
-    </script>
+    <div id="app">جاري التحميل...</div>
+    <!-- تحميل مباشر بدون فحص نزاهة -->
+    <script src="_framework/blazor.webassembly.js"></script>
 </body>
 </html>
