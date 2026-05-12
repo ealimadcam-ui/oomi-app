@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OOMI - اطلب الآن</title>
+    <!-- المسار الصحيح للمستودع -->
     <base href="/oomi-app/" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
@@ -13,8 +14,6 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="OOMI.Client.styles.css" rel="stylesheet" />
     <link href="manifest.webmanifest" rel="manifest" />
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
 </head>
 
 <body>
@@ -31,36 +30,35 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <!-- تحميل ملف التشغيل من app-bin مباشرة لتفادي حظر جيت هاب لمجلد _framework -->
-    <script src="app-bin/blazor.webassembly.js" autostart="false"></script>
+    <!-- محرك Blazor الأساسي -->
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     
     <script>
-        // التأكد من تحميل المكتبة قبل محاولة تشغيلها
-        window.onload = function() {
-            if (typeof Blazor !== 'undefined') {
+        // تشغيل النظام مع تجاوز فحص النزاهة (Integrity) يدوياً
+        if (typeof Blazor !== 'undefined') {
+            Blazor.start({
+                loadBootResource: function (type, name, defaultUri, integrity) {
+                    // إجبار المتصفح على تحميل الملفات مباشرة لكسر حلقة الـ SRI
+                    return defaultUri;
+                }
+            });
+        } else {
+            // محاولة بديلة إذا فشل المسار الأول (التحويل لـ app-bin)
+            let script = document.createElement('script');
+            script.src = "app-bin/blazor.webassembly.js";
+            script.onload = () => {
                 Blazor.start({
                     loadBootResource: function (type, name, defaultUri, integrity) {
-                        // توجيه كافة موارد الإقلاع إلى المجلد البديل وتجاهل فحص النزاهة
-                        console.log("OOMI System: Fetching " + name + " from app-bin");
                         return `app-bin/${name}`;
                     }
                 });
-            } else {
-                console.error("OOMI Error: Blazor engine failed to load from app-bin.");
-            }
-        };
-    </script>
-
-    <script>
-        // تسجيل الـ Service Worker مع تجاهل الأخطاء لضمان استمرارية التطبيق
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
-                .catch(err => console.log("SW Status: Pending update."));
+            };
+            document.body.appendChild(script);
         }
     </script>
 
+    <!-- تضمين الخريطة والوظائف الأخرى -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script>
         window.selectedLocationText = "الرياض، المملكة العربية السعودية";
         window.initializeMap = () => {
